@@ -1,8 +1,8 @@
 import axios from "axios";
-import { FETCH_MENU } from "./types";
+import { FETCH_MENU, ORDER_MADE } from "./types";
 export const fetchMenu = () => (dispatch) => {
   axios
-    .get("/menu/cust")
+    .get("http://localhost:5000/menu/cust")
     .then((response) => {
       dispatch({
         type: FETCH_MENU,
@@ -13,11 +13,14 @@ export const fetchMenu = () => (dispatch) => {
 };
 
 export const makeOrder = (order) => (dispatch) => {
-  console.log(order);
   axios
-    .post("/orders",order)
+    .post("http://localhost:5000/orders",order)
     .then((response) => {
-      console.log("need to be adjust");
+      dispatch({
+        type: ORDER_MADE
+      })
     })
-    .catch((error) => console.log(error));
+    .catch((error) => {
+     console.log("need");
+    });
 };

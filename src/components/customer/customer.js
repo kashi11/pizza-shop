@@ -13,6 +13,12 @@ import {
   Toolbar,
   FormHelperText,
   Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  List,
+  ListItem,
+  DialogActions,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
@@ -56,14 +62,19 @@ function CustomerPage(props) {
   const [topping, setTopping] = useState({ value: "", name: "", price: 0 });
   const [price, setPrice] = useState(0);
   const [name, setName] = useState("null");
+  const [disable, setDisable] = useState(false);
   const history = useHistory();
+  const [errorOpen, setErrorOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  
+
   useEffect(() => {
     if (count === 0) {
       props.fetchMenu();
     }
     count = count + 1;
     priceChange();
-  }, [flavour.price, crust.price, size.price, topping.price]);
+  }, [flavour.price, crust.price, size.price, topping.price, props.orderMade]);
   const flavours = props.menu.filter((item) => item.type === "Flavours");
   const crusts = props.menu.filter((item) => item.type === "Crusts");
   const sizes = props.menu.filter((item) => item.type === "Sizes");
@@ -87,6 +98,18 @@ function CustomerPage(props) {
       });
     }
   };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleErrorClose = () => {
+    setErrorOpen(false);
+  };
+  const handleDialogButton = () => {
+    setDisable(false);
+    handleClose();
+    props.fetchMenu();
+  }
   const menuChange = (ev, index, type) => {
     if (type === "flavour") {
       setFlavour((prevState) => {
@@ -125,7 +148,6 @@ function CustomerPage(props) {
 
   const none = (type) => {
     if (type === "crust") {
-      console.log("1");
       setCrust((prevState) => {
         return { ...prevState, price: "0", name: "" };
       });
@@ -145,6 +167,7 @@ function CustomerPage(props) {
   };
 
   const handleOrder = () => {
+    setDisable(true);
     if (
       flavour.name !== "" &&
       size.name !== "" &&
@@ -160,6 +183,9 @@ function CustomerPage(props) {
         price: price,
       };
       props.makeOrder(order);
+    } else {
+      setErrorOpen(true);
+      setDisable(false);
     }
   };
   const nameChange = (ev) => {
@@ -322,7 +348,12 @@ function CustomerPage(props) {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <Button color="secondary" variant="contained" onClick={handleOrder}>
+            <Button
+              disabled={disable}
+              color="secondary"
+              variant="contained"
+              onClick={handleOrder}
+            >
               Order
             </Button>
           </Grid>
@@ -334,6 +365,52 @@ function CustomerPage(props) {
           topping={toppings}
         />
       </div>
+      <Dialog
+        fullWidth
+        open={errorOpen}
+        onClose={handleErrorClose}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">
+          Error! Something Went Wrong
+        </DialogTitle>
+        <DialogContent>
+          <List>
+            <ListItem>1. Check your internet connection</ListItem>
+            <ListItem>2. Check all required items are entered</ListItem>
+          </List>
+          <DialogActions>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleErrorClose}
+            >
+              Ok
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        fullWidth
+        open={props.orderMade}
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">Order Placed</DialogTitle>
+        <DialogContent>
+          Your order has been placed successfully. <br />
+          Thank you!
+          <DialogActions>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleDialogButton}
+            >
+              Ok
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -347,6 +424,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     menu: state.fetch.menu,
+    orderMade: state.fetch.orderMade,
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(CustomerPage);

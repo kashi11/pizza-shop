@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -51,14 +51,13 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("xs")]: {
       padding: 0,
     },
-
   },
 }));
 
 function Menu(props) {
   const params = useParams();
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -74,7 +73,7 @@ function Menu(props) {
   useEffect(() => {
     props.clearMenu();
     props.fetchMenu(params.id);
-  }, [params.id,props.added]);
+  }, [params.id, props.added]);
 
   return (
     <Container className={classes.container}>

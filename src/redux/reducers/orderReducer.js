@@ -6,13 +6,15 @@ import {
   MENU_ADDED,
   CLEAR_ORDERS,
   ORDER_COMPLETED,
+  ORDER_MADE,
 } from "../actions/types";
 const initialState = {
   orders: [],
   menu: [],
   loading: false,
   added: false,
-  compl: false
+  compl: false,
+  orderMade: false,
 };
 
 export default function (state = initialState, action) {
@@ -26,12 +28,14 @@ export default function (state = initialState, action) {
     case FETCH_MENU:
       return {
         ...state,
+        orderMade: false,
         added: false,
         menu: action.payload,
       };
     case CLEAR_MENU:
       return {
         ...state,
+        orderMade: false,
         menu: [],
       };
     case CLEAR_ORDERS:
@@ -53,6 +57,11 @@ export default function (state = initialState, action) {
       return {
         ...state,
         compl: true,
+      }
+      case ORDER_MADE:
+      return {
+        ...state,
+        orderMade: true,
       }
     default:
       return state;
