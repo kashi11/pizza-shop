@@ -2,7 +2,7 @@ import axios from "axios";
 import { FETCH_MENU, ORDER_MADE } from "./types";
 export const fetchMenu = () => (dispatch) => {
   axios
-    .get("http://localhost:5000/menu/cust")
+    .get("/menu/cust")
     .then((response) => {
       dispatch({
         type: FETCH_MENU,
@@ -13,8 +13,9 @@ export const fetchMenu = () => (dispatch) => {
 };
 
 export const makeOrder = (order) => (dispatch) => {
+  console.log(order);
   axios
-    .post("http://localhost:5000/orders",order)
+    .post("/orders",order)
     .then((response) => {
       dispatch({
         type: ORDER_MADE
