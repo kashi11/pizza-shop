@@ -107,6 +107,11 @@ function CustomerPage(props) {
   };
   const handleDialogButton = () => {
     setDisable(false);
+    setFlavour({value: "",price: 0, name: ""});
+    setCrust({value: "",price: 0, name: ""});
+    setSize({value: "",price: 0, name: ""});
+    setTopping({value: "",price: 0, name: ""});
+    setPrice(0);
     handleClose();
     props.fetchMenu();
   }
